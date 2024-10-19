@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الماغنوم</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        #gun-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .chamber {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            border-radius: 50%;
+            background-color: #ccc;
+            border: 3px solid #333;
+            position: relative;
+        }
+        .chamber .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background-color: #666;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .chamber.used {
+            background-color: #000;
+        }
+        #shootButton {
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #shootButton:hover {
+            background-color: #c82333;
+        }
+        #message {
+            margin-top: 20px;
+            color: #dc3545;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>لعبة الماغنوم</h1>
+    <div id="gun-container">
+        <div class="chamber" id="chamber1"><div class="center"></div></div>
+        <div class="chamber" id="chamber2"><div class="center"></div></div>
+        <div class="chamber" id="chamber3"><div class="center"></div></div>
+        <div class="chamber" id="chamber4"><div class="center"></div></div>
+        <div class="chamber" id="chamber5"><div class="center"></div></div>
+        <div class="chamber" id="chamber6"><div class="center"></div></div>
+    </div>
+    <br>
+    <button id="shootButton" onclick="shoot()">أطلق النار</button>
+    <div id="message"></div>
+
+    <script>
+        // تحديد الاحتمالات لكل مخزن
+        const probabilities = [0.05, 0.08, 0.15, 0.22, 0.29, 0.21];
+        let currentChamber = 0;
+        let bulletPosition = -1;
+
+        // حساب مكان الرصاصة بناءً على الاحتمالات
+        function chooseBulletPosition() {
+            const random = Math.random();
+            let cumulativeProbability = 0;
+            for (let i = 0; i < probabilities.length; i++) {
+                cumulativeProbability += probabilities[i];
+                if (random <= cumulativeProbability) {
+                    return i;
+                }
+            }
+            return probabilities.length - 1; // in case of rounding issues
+        }
+
+        bulletPosition = chooseBulletPosition();
+
+        function shoot() {
+            if (currentChamber < 6) {
+                const chamberElement = document.getElementById('chamber' + (currentChamber + 1));
+                chamberElement.classList.add('used');
+                
+                if (currentChamber === bulletPosition) {
+                    document.getElementById('message').textContent = 'لقد خسرت! الطلقة كانت في المخزن رقم ' + (currentChamber + 1) + '.';
+                    document.getElementById('shootButton').disabled = true;
+                } else {
+                    document.getElementById('message').textContent = 'نجوت! المخزن ' + (currentChamber + 1) + ' فارغ.';
+                }
+
+                currentChamber++;
+            }
+        }
+    </script>
+</body>
+</html>
